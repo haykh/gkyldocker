@@ -1,0 +1,11 @@
+services:
+  gk:
+    build:
+      context: .
+      dockerfile: Dockerfile      
+    image: gkylenv:latest
+    container_name: gk
+    volumes:
+      - ./gkylroot:/root/gkylroot
+    stdin_open: true
+    tty: true
