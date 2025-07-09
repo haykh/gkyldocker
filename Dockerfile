@@ -25,10 +25,6 @@ RUN git clone https://github.com/ammarhakim/gkylzero/ && cd gkylzero/install-dep
     ./mkdeps.sh --build-superlu=yes --build-superlu_dist=yes --build-luajit=yes --build-openblas=yes MPICC=$(which mpicc) MPICXX=$(which mpicxx) && cd .. && \
     ./configure --use-mpi=yes --use-lua=yes --mpi-inc=/usr/lib/x86_64-linux-gnu/openmpi/include --mpi-lib=/usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so && make install -j$(nproc)
 
-RUN python3.12 -m venv /opt/venv && \
-    $VIRTUAL_ENV/bin/python -m pip install --upgrade pip && \
-    $VIRTUAL_ENV/bin/python -m pip install matplotlib numpy scipy jupyterlab ipykernel postgkyl 
-
 RUN apt-get clean && \
     apt-get autoclean && \
     apt-get autoremove -y && \
@@ -44,7 +40,13 @@ RUN wget https://raw.githubusercontent.com/haykh/.dotfiles/refs/heads/master/scr
     chmod +x $HOME/minrc.sh && bash $HOME/minrc.sh --unattended && \
     git clone https://github.com/haykh/.dotfiles.git $HOME/.dotfiles && \
     ln -s $HOME/.dotfiles/.config/nvim $HOME/.config/nvim && \
-    ln -s $HOME/.dotfiles/.config/starship.toml $HOME/.config/starship.toml && \
+    ln -s $HOME/.dotfiles/.config/starship.toml $HOME/.config/starship.toml 
+
+RUN python3.12 -m venv /opt/venv && \
+    $VIRTUAL_ENV/bin/python -m pip install --upgrade pip && \
+    $VIRTUAL_ENV/bin/python -m pip install matplotlib numpy scipy jupyterlab ipykernel postgkyl && \
+    echo "export PATH=$VIRTUAL_ENV/bin:$PATH" >> $HOME/.zshrc && \
+    echo "source $VIRTUAL_ENV/bin/activate" >> $HOME/.zshrc && \
     $HOME/.local/bin/nvim --headless "+Lazy! sync" +qa
 
 CMD ["zsh"]
